@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h> // Necessário para o malloc
+#include <stdlib.h>
 
 typedef struct Celula {
     struct Celula *anterior;
@@ -37,45 +37,44 @@ void enfileirar(Fila *fila, int valor) {
     } else {
         fila->tail->proximo = nova;
         nova->anterior = fila->tail;
-         // Corrigido de fila.tail para fila->tail
+        fila->tail = nova; // Atualiza o rabo da fila
     }
-    fila->tail = nova;
     fila->qtde++;
 }
 
-void desenfileirar(Fila *fila){
-    if(fila->qtde > 1){
-        Celula *tmp = fila->head;
-        fila->head->proximo->anterior = NULL;
+void desenfileirar(Fila *fila) {
+    if (fila->qtde == 0) return; // Proteção caso a fila esteja vazia
+
+    Celula *tmp = fila->head;
+    if (fila->qtde > 1) {
         fila->head = fila->head->proximo;
-        free(tmp);
-        fila->qtde--;
-    }else if(fila->qtde == 1){
-        Celula *tmp = fila->head;
+        fila->head->anterior = NULL;
+    } else {
         fila->head = NULL;
-        fila->tail == NULL;
-        free(tmp);
-        fila->qtde--;
+        fila->tail = NULL; // Corrigido de == para =
     }
+    free(tmp);
+    fila->qtde--;
 }
 
 void imprimir(Fila *fila) {
     Celula *atual = fila->head;
-    printf("Fila: ");
+    printf("Fila (Direto): ");
     while (atual != NULL) {
         printf("[%d] ", atual->valor);
         atual = atual->proximo;
     }
-    printf("(Tamanho: %d)\n", fila->qtde);
+    printf("| Tamanho: %d\n", fila->qtde);
 }
 
-void imprimir_invertido(Fila *fila){
-    Celula *atual = fila->tail
-    while(atual != NULL){
-        printf("%d", atual->valor);
-        atual = atual -> anterior;
-
+void imprimir_invertido(Fila *fila) {
+    Celula *atual = fila->tail;
+    printf("Fila (Inverso): ");
+    while (atual != NULL) {
+        printf("[%d] ", atual->valor);
+        atual = atual->anterior;
     }
+    printf("\n---------------------------\n");
 }
 
 int main() {
@@ -83,16 +82,21 @@ int main() {
     
     enfileirar(fila, 5);
     imprimir(fila);
-    imprimir_invertido(fila)
+    imprimir_invertido(fila);
+    
     enfileirar(fila, 8);
     imprimir(fila);
-    imprimir_invertido(fila)
+    imprimir_invertido(fila);
+    
     enfileirar(fila, 4);
     imprimir(fila);
-    imprimir_invertido(fila)
+    imprimir_invertido(fila);
+    
     enfileirar(fila, 7);
     imprimir(fila);
     imprimir_invertido(fila);
+    
+    printf("\nRemovendo primeiro elemento...\n");
     desenfileirar(fila);
     imprimir(fila);
     imprimir_invertido(fila);
